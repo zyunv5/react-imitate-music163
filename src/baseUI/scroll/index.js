@@ -7,21 +7,42 @@ import React, {
 } from "react";
 import PropTypes from "prop-types";
 import BScroll from "better-scroll";
-import { ScrollContainer } from "./style.js";
+import styled from "styled-components";
+import Loading from "../loading/index";
+import LoadingV2 from "../loading-v2/index";
+
+const ScrollContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+`;
+const PullUpLoading = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 5px;
+  width: 60px;
+  height: 60px;
+  margin: auto;
+  z-index: 100;
+`;
+
+export const PullDownLoading = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0px;
+  height: 30px;
+  margin: auto;
+  z-index: 100;
+`;
 
 const Scroll = forwardRef((props, ref) => {
   const [bScroll, setBScroll] = useState();
   const scrollContainerRef = useRef();
-  const {
-    direction,
-    click,
-    refresh,
-    pullUpLoading,
-    pullDownLoading,
-    bounceTop,
-    bounceBottom,
-  } = props;
-  const { pullUp, pullDown, onScroll } = props;
+  const { direction, click, refresh, bounceTop, bounceBottom } = props;
+  const { pullUp, pullDown, onScroll, pullUpLoading, pullDownLoading } = props;
+
   useEffect(() => {
     //创建实例
     const scroll = new BScroll(scrollContainerRef.current, {
@@ -40,12 +61,14 @@ const Scroll = forwardRef((props, ref) => {
       setBScroll(null);
     };
   }, []);
+
   useEffect(() => {
     //每次重新渲染都要刷新实例
     if (refresh && bScroll) {
       bScroll.refresh();
     }
   });
+
   useEffect(() => {
     //给实例绑定scroll事件
     if (!bScroll || !onScroll) return;
@@ -69,6 +92,7 @@ const Scroll = forwardRef((props, ref) => {
       bScroll.off("scrollEnd");
     };
   }, [pullUp, bScroll]);
+  
   useEffect(() => {
     if (!bScroll || !pullDown) return;
     bScroll.on("touchEnd", (pos) => {
@@ -97,8 +121,23 @@ const Scroll = forwardRef((props, ref) => {
     },
   }));
 
+  const PullUpDisplayStyle = pullUpLoading
+    ? { display: "" }
+    : { display: "none" };
+  const PullDownDisplayStyle = pullDownLoading
+    ? { display: "" }
+    : { display: "none" };
+
   return (
-    <ScrollContainer ref={scrollContainerRef}>{props.children}</ScrollContainer>
+    <ScrollContainer ref={scrollContainerRef}>
+      {props.children}
+      <PullUpLoading style={PullUpDisplayStyle}>
+        <Loading></Loading>
+      </PullUpLoading>
+      <PullDownLoading style={PullDownDisplayStyle}>
+        <LoadingV2></LoadingV2>
+      </PullDownLoading>
+    </ScrollContainer>
   );
 });
 
