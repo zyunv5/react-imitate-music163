@@ -9,11 +9,11 @@ export const getRecommendListRequest = () => {
 };
 
 export const getHotSingerListRequest = (count) => {
-  return axiosInstance.get(`/top/artists?offset=${count}`);
+  return axiosInstance.get(`/artist/list?offset=${count}`);
 };
 
-export const getSingerListRequest = (category, alpha, count) => {
+export const getSingerListRequest = (category,area, alpha, count) => {
   return axiosInstance.get(
-    `/artist?cat=${category}&initial=${alpha.toLowerCase()}&offset=${count}`
+    `/artist/list?type=${category}&area=${area}&initial=${alpha.toLowerCase()}&offset=${count}`
   );
 };

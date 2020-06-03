@@ -11,7 +11,7 @@ import {
 } from "./store/actionCreators";
 import Horizen from "../../baseUI/horizen-item";
 import Scroll from "../../baseUI/scroll/index";
-import { categoryTypes, alphaTypes } from "../../api/config";
+import { categoryTypes,areaTypes, alphaTypes } from "../../api/config";
 import { NavContainer, List, ListContainer, ListItem } from "./style";
 import { connect } from "react-redux";
 import Loading from "../../baseUI/loading/index";
@@ -132,6 +132,10 @@ function Singers(props) {
         title={"分类(默认热门):"}
         handleClick={handleUpdateCatetory}
         oldVal={category}
+      ></Horizen>
+       <Horizen
+        list={areaTypes}
+        title={"地区:"}
       ></Horizen>
       <Horizen
         list={alphaTypes}
