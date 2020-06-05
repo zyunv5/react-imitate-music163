@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect,useContext } from "react";
 import {
   getSingerList,
   getHotSingerList,
@@ -16,10 +16,11 @@ import { NavContainer, List, ListContainer, ListItem } from "./style";
 import { connect } from "react-redux";
 import Loading from "../../baseUI/loading/index";
 import LazyLoad, { forceCheck } from "react-lazyload";
+import { CategoryDataContext, CHANGE_ALPHA, CHANGE_GATEGORY } from "./data";
 
 const mapStateToProps = (state) => ({
   singerList: state.getIn(["singers", "singerList"]),
-  enterLoading: state.getIn(["singers,enterLoading"]),
+  enterLoading: state.getIn(["singers","enterLoading"]),
   pullUpLoading: state.getIn(["singers", "pullUpLoading"]),
   pullDownLoading: state.getIn(["singers", "pullDownLoading"]),
   pageCount: state.getIn(["singers", "pageCount"]),
@@ -57,8 +58,11 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 function Singers(props) {
-  let [category, setCategory] = useState("");
-  let [alpha, setAlpha] = useState("");
+  // 引入useContext 注释掉useState
+  // let [category, setCategory] = useState("");
+  // let [alpha, setAlpha] = useState("");
+  const {data,dispatch}=useContext(CategoryDataContext);
+  const {category,area,alpha}=data.toJS();
 
   const {
     singerList,
@@ -75,14 +79,20 @@ function Singers(props) {
   } = props;
 
   let handleUpdateAlpha = (val) => {
-    setAlpha(val);
+    // setAlpha(val);
+    dispatch({type:CHANGE_ALPHA,data:val})
     updateDispatch(category, val);
   };
 
   let handleUpdateCatetory = (val) => {
-    setCategory(val);
+    // setCategory(val);
+    dispatch({type:CHANGE_GATEGORY,data:val})
     updateDispatch(val, alpha);
   };
+
+  let handleUpdateArea=(val)=>{
+
+  }
 
   const handlePullUp = () => {
     pullUpRefreshDispatch(category, alpha, category === "", pageCount);
@@ -92,19 +102,17 @@ function Singers(props) {
     pullDownRefreshDispatch(category, alpha);
   };
 
-  // const singerList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((item) => {
-  //   return {
-  //     picUrl:
-  //       "https://p2.music.126.net/uTwOm8AEFFX_BYHvfvFcmQ==/109951164232057952.jpg",
-  //     name: "隔壁老樊",
-  //     accountId: 277313426,
-  //   };
-  // });
+  useEffect(()=>{
+    if(!singerList.size){
+      getHotSingerDispatch()
+    }
+  },[])
 
   const renderSingerList = () => {
+    const list=singerList?singerList.toJS():[]
     return (
       <List>
-        {singerList.map((item, index) => {
+        {list.map((item, index) => {
           return (
             <ListItem key={item.accountId + "" + index}>
               <div className="img_wrapper">
@@ -136,6 +144,8 @@ function Singers(props) {
        <Horizen
         list={areaTypes}
         title={"地区:"}
+        handleClick={handleUpdateArea}
+        oldVal={area}
       ></Horizen>
       <Horizen
         list={alphaTypes}

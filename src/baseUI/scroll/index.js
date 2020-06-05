@@ -3,13 +3,14 @@ import React, {
   useRef,
   useEffect,
   useImperativeHandle,
-  forwardRef,
+  forwardRef,useMemo
 } from "react";
 import PropTypes from "prop-types";
 import BScroll from "better-scroll";
 import styled from "styled-components";
 import Loading from "../loading/index";
 import LoadingV2 from "../loading-v2/index";
+import {debounce} from "../../api/utils"
 
 const ScrollContainer = styled.div`
   width: 100%;
@@ -42,6 +43,14 @@ const Scroll = forwardRef((props, ref) => {
   const scrollContainerRef = useRef();
   const { direction, click, refresh, bounceTop, bounceBottom } = props;
   const { pullUp, pullDown, onScroll, pullUpLoading, pullDownLoading } = props;
+
+  let pullUpDebounce=useMemo(() => {
+    return debounce(pullUp,300)
+  }, [pullUp])
+  
+  let pullDownDebounce=useMemo(()=>{
+    return debounce(pullDown,300)
+  },[pullDown])
 
   useEffect(() => {
     //创建实例
@@ -82,29 +91,32 @@ const Scroll = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (!bScroll || !pullUp) return;
-    bScroll.on("scrollEnd", () => {
+    const handlePullUp=()=>{
       //判断是否滑到了底部
       if (bScroll.y <= bScroll.maxScrollY + 100) {
-        pullUp();
+        pullUpDebounce();
       }
-    });
+    }
+    bScroll.on("scrollEnd",handlePullUp );
+    //解除监听
     return () => {
       bScroll.off("scrollEnd");
     };
-  }, [pullUp, bScroll]);
+  }, [pullUp,pullUpDebounce,bScroll]);
   
   useEffect(() => {
     if (!bScroll || !pullDown) return;
-    bScroll.on("touchEnd", (pos) => {
-      //判断用户下拉
-      if (pos.y > 50) {
-        pullDown();
+    const handlePullDown=(pos)=>{
+      if(pos.y>50){
+        pullDownDebounce();
       }
-    });
+    }
+    
+    bScroll.on("touchEnd",handlePullDown);
     return () => {
       bScroll.off("touchEnd");
     };
-  }, [pullDown, bScroll]);
+  }, [pullDown,pullDownDebounce, bScroll]);
 
   useImperativeHandle(ref, () => ({
     refresh() {
@@ -119,6 +131,7 @@ const Scroll = forwardRef((props, ref) => {
         return bScroll;
       }
     },
+    
   }));
 
   const PullUpDisplayStyle = pullUpLoading

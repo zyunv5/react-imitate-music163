@@ -53,6 +53,7 @@ export const refreshMoreHotSingerList=()=>{
   return (dispatch,getState)=>{
     const pageCount=getState().getIn(['singers','pageCount'])
     const singerList=getState().getIn(['singers','singerList']).toJS();
+    console.log(pageCount);
     getHotSingerListRequest(pageCount).then(res=>{
       const data=[...singerList,...res.artists];
       dispatch(changeSingerList(data));
@@ -67,7 +68,6 @@ export const refreshMoreHotSingerList=()=>{
 export const getSingerList=(category,alpha)=>{
   return (dispatch,getState)=>{
     getSingerListRequest(category,alpha,0).then(res=>{
-      console.log(alpha);
       const data=res.artists;
       dispatch(changeSingerList(data));
       dispatch(changeEnterLoading(false));
