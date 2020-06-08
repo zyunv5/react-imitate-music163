@@ -59,7 +59,7 @@ export const TopDesc = styled.div`
   .img_wrapper {
     width: 120px;
     height: 120px;
-    position: relative;         
+    position: relative;
     .decorate {
       position: absolute;
       top: 0;
@@ -145,7 +145,7 @@ export const Menu = styled.div`
 export const SongList = styled.div`
   border-radius: 10px;
   opacity: 0.98;
-  ${props => props.showBackground ? `background: ${style ["highlight-background-color"]}`: ""}
+  ${props => props.showBackground ? `background: ${style["highlight-background-color"]}`: ""}
   .first_line {
     box-sizing: border-box;
     padding: 10px 0;
@@ -203,7 +203,7 @@ export const SongItem = styled.ul`
   >li {
     display: flex;
     height: 60px;
-    align-items: center;  
+    align-items: center;
     .index {
       flex-basis: 60px;
       width: 60px;
