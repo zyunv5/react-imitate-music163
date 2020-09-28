@@ -8,7 +8,7 @@ function Slider(props) {
   const { bannerList } = props
 
   useEffect(() => {
-    if (bannerList.length && !sliderSwiper) {
+    if (bannerList && !sliderSwiper) {
       let newSliderSwiper = new Swiper('.slider-container', {
         loop: true,
         autoplay: {
